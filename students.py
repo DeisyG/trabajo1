@@ -12,3 +12,4 @@ class Student(Model):
 if __name__== '__main__':
     db.connect()#permite conectarse a la base de datos
     db.create_tables([Student],safe=True)
+"""holaaaaaa"""
