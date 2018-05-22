@@ -31,6 +31,7 @@ def view_entries(search_query=None):
 
     if search_query:
         entries= entries.where(Entry.content.contains(search_query))
+
     for entry in entries:
 
         timestamp= entry.timestamp.strftime('%A %B %d, %Y %I:%M%p') #formato que deseen
@@ -38,35 +39,62 @@ def view_entries(search_query=None):
         print(timestamp)
         print('+'*len(timestamp))
         #print de esta entrada
-        print(entry.content)
+        print(entry.id," | ", entry.content)
         print('\n\n\n'+'+'*len(timestamp)+'\n')
         print("n-->siguiente entrada")
         print("q-->salir del menu")
-        print("d-->borrar entrada")
 
-        next_action=input('Accion a realizar [n/q/d]: ').lower().strip()
+        next_action=input('Accion a realizar [n/q/]: ').lower().strip()
         if next_action == 'q':
             break
-        elif next_action == 'd':
-            delete_entry(entry)
 
 def search_entries():
     """Busca una entrada con cierto texto"""
 
     view_entries(input('Texto a buscar: '))
 
-def delete_entry(entry):
-    """Borra un registro"""
+def delete_entry():
+    """Eliminar un registro"""
+    entries= Entry.select().order_by(Entry.timestamp.desc())
+    for entry in entries:
+        timestamp= entry.timestamp.strftime('%A %B %d, %Y %I:%M%p') #formato que deseen
+        print(timestamp)
+        print('+'*len(timestamp))
+        #print de esta entrada
+        print(entry.id," | ", entry.content)
 
+    i=input("Ingrese ID: ")
     response=input("Estas seguro? [Y/N]: ").lower()
     if response == 'y':
-        entry.delete_instance()
-        print("ENTRADA BORRADA")
+        f=Entry.get(Entry.id==i)
+        f.delete_instance()
+        print("ELIMINADO EXITOSAMENTE")
+
+def update_entry():
+    """Modificar un registro"""
+    entries= Entry.select().order_by(Entry.timestamp.desc())
+    for entry in entries:
+        timestamp= entry.timestamp.strftime('%A %B %d, %Y %I:%M%p') #formato que deseen
+        print(timestamp)
+        print('+'*len(timestamp))
+        #print de esta entrada
+        print(entry.id," | ", entry.content)
+
+    i=input("Ingrese ID: ")
+    c=input("ingrese nuevo contenido: ")
+    response=input("Estas seguro? [Y/N]: ").lower()
+    if response == 'y':
+        f=Entry.id
+        n=entry.update(content=c).where(f==i)
+        n.execute()
+        print("MODIFICADO EXITOSAMENTE")
 
 menu = OrderedDict([
     ('a', add_entry),
     ('v', view_entries),
     ('s', search_entries),
+    ('m', update_entry),
+    ('d', delete_entry),
 ])
 
 def menu_loop():
@@ -75,7 +103,7 @@ def menu_loop():
     choice= None
 
     while choice != 'q':
-        clear()
+        print("")
         print("Presiona 'q' para salir")
 
         for key, value in menu.items():
